@@ -12,7 +12,8 @@ const Profile = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [districts, setDistricts] = useState([]);
     const [upazilas, setUpazilas] = useState([]);
-   
+    // Handling District/Upazila is tricky if only one is updated.
+    // I will simplify by fetching both lists and showing select options.
 
     useEffect(() => {
         const fetchLocations = async () => {
