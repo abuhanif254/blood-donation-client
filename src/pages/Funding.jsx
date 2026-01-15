@@ -2,8 +2,8 @@ import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { useEffect, useState } from 'react';
 import api from '../api/axios';
-import useAuth from '../hooks/useAuth';
 import Swal from 'sweetalert2';
+import { FaHandHoldingHeart, FaHistory, FaDonate, FaLock } from 'react-icons/fa';
 
 // Use your Publishable Key
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || 'pk_test_TYooMQauvdEDq54NiTphI7jx');
@@ -63,24 +63,29 @@ const CheckoutForm = ({ onSuccess }) => {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-                <label className="block text-gray-700 text-sm font-bold mb-2">Amount (USD)</label>
-                <input
-                    type="number"
-                    min="1"
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    placeholder="Enter amount"
-                />
+                <label className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Donation Amount (USD)</label>
+                <div className="relative">
+                    <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                    <input
+                        type="number"
+                        min="1"
+                        value={amount}
+                        onChange={(e) => setAmount(e.target.value)}
+                        className="input-field pl-8"
+                        placeholder="Enter amount"
+                    />
+                </div>
             </div>
-            <div className="mb-4 bg-blue-50 border-l-4 border-blue-500 p-4">
-                <p className="text-sm text-blue-700">
-                    <span className="font-bold">Test Mode:</span> Use card <code className="bg-blue-100 px-1 rounded font-mono">4242 4242 4242 4242</code>, any future date (e.g., 12/30), and any CVC (e.g., 123456).
+
+            <div className="bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 p-4 rounded-r-lg">
+                <p className="text-sm text-blue-700 dark:text-blue-300">
+                    <span className="font-bold">Test Mode:</span> Use card <code className="bg-blue-100 dark:bg-blue-800 px-1 rounded font-mono">4242 4242 4242 4242</code>, any future date, and any CVC.
                 </p>
             </div>
-            <div className="p-3 border rounded">
+
+            <div className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-900">
                 <CardElement options={{
                     style: {
                         base: {
@@ -91,18 +96,26 @@ const CheckoutForm = ({ onSuccess }) => {
                             },
                         },
                         invalid: {
-                            color: '#9e2146',
+                            color: '#ef4444',
                         },
                     },
                 }} />
             </div>
-            {error && <div className="text-red-500 text-sm">{error}</div>}
+
+            {error && <div className="text-red-500 text-sm bg-red-50 p-2 rounded border border-red-200">{error}</div>}
+
             <button
                 type="submit"
                 disabled={!stripe || processing}
-                className={`w-full bg-red-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${processing ? 'opacity-50 cursor-not-allowed' : 'hover:bg-red-700'}`}
+                className={`w-full btn-primary py-3 flex justify-center items-center gap-2 shadow-lg ${processing ? 'opacity-70 cursor-not-allowed' : ''}`}
             >
-                {processing ? 'Processing...' : 'Donate'}
+                {processing ? (
+                    'Processing...'
+                ) : (
+                    <>
+                        <FaLock className="w-4 h-4" /> Secure Donate
+                    </>
+                )}
             </button>
         </form>
     );
@@ -113,7 +126,6 @@ const Funding = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5;
-    const { user } = useAuth();
 
     const fetchFunds = async () => {
         try {
@@ -130,79 +142,93 @@ const Funding = () => {
 
     const handleSuccess = () => {
         setIsModalOpen(false);
-        // Sweet alert here if requested, plain alert for now
         Swal.fire({
-            position: 'center',
             icon: 'success',
-            title: 'Donation Successful! Thank you.',
-            showConfirmButton: false,
-            timer: 1500
+            title: 'Thank You!',
+            text: 'Your contribution will help save lives.',
+            confirmButtonColor: '#D32F2F',
+            timer: 2000
         });
         fetchFunds();
     }
 
     return (
-        <div className="py-10 px-4 min-h-screen bg-gray-50">
-            <div className="max-w-4xl mx-auto">
-                <div className="flex justify-between items-center mb-8">
-                    <h2 className="text-3xl font-bold text-gray-800">Funding</h2>
+        <div className="py-12 px-4 min-h-screen bg-gray-50 dark:bg-gray-900">
+            <div className="max-w-5xl mx-auto space-y-8">
+
+                {/* Header */}
+                <div className="flex flex-col md:flex-row justify-between items-center gap-6 text-center md:text-left">
+                    <div>
+                        <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white mb-2">Funding & Donations</h2>
+                        <p className="text-gray-500 dark:text-gray-400 max-w-lg">Support our mission to provide safe blood to everyone. Every dollar counts.</p>
+                    </div>
                     <button
                         onClick={() => setIsModalOpen(true)}
-                        className="bg-green-600 text-white font-bold py-2 px-6 rounded-full hover:bg-green-700 transition duration-300 shadow-lg"
+                        className="bg-green-600 text-white font-bold py-3 px-8 rounded-full hover:bg-green-700 transition duration-300 shadow-xl flex items-center gap-2 transform hover:scale-105"
                     >
-                        Give Fund
+                        <FaHandHoldingHeart className="w-5 h-5" /> Give Fund
                     </button>
                 </div>
 
-                <div className="bg-white rounded-lg shadow-md overflow-hidden">
-                    <table className="min-w-full leading-normal">
-                        <thead>
-                            <tr>
-                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Donor Name</th>
-                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Amount</th>
-                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {funds.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map(fund => (
-                                <tr key={fund._id}>
-                                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                        <p className="text-gray-900 whitespace-no-wrap">{fund.donorName}</p>
-                                    </td>
-                                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                        <p className="text-gray-900 whitespace-no-wrap">${fund.fundAmount}</p>
-                                    </td>
-                                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                        <p className="text-gray-900 whitespace-no-wrap">{new Date(fund.fundingDate).toLocaleDateString()}</p>
-                                    </td>
+                {/* Funds Table */}
+                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+                    <div className="p-6 border-b border-gray-100 dark:border-gray-700 flex items-center gap-2">
+                        <FaHistory className="text-gray-400" />
+                        <h3 className="text-lg font-bold text-gray-900 dark:text-white">Recent Contributions</h3>
+                    </div>
+
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full leading-normal">
+                            <thead>
+                                <tr className="bg-gray-50 dark:bg-gray-900/50 text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider">
+                                    <th className="px-6 py-4 font-semibold text-left">Donor</th>
+                                    <th className="px-6 py-4 font-semibold text-left">Amount</th>
+                                    <th className="px-6 py-4 font-semibold text-left">Date</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                    {funds.length === 0 && <p className="p-5 text-gray-500 text-center">No funds recorded yet. Be the first!</p>}
+                            </thead>
+                            <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+                                {funds.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map(fund => (
+                                    <tr key={fund._id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition">
+                                        <td className="px-6 py-4">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-8 h-8 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600">
+                                                    <FaDonate className="w-4 h-4" />
+                                                </div>
+                                                <span className="font-medium text-gray-900 dark:text-white">{fund.donorName}</span>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <span className="text-green-600 font-bold bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-md border border-green-100 dark:border-green-900/30">
+                                                ${fund.fundAmount}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4 text-gray-500 dark:text-gray-400 text-sm">
+                                            {new Date(fund.fundingDate).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                        {funds.length === 0 && <div className="p-8 text-center text-gray-500">No funds recorded yet. Be the first to donate!</div>}
+                    </div>
 
                     {/* Pagination Controls */}
                     {funds.length > itemsPerPage && (
-                        <div className="px-5 py-5 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between          ">
-                            <span className="text-xs xs:text-sm text-gray-900">
-                                Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, funds.length)} of {funds.length} Entries
-                            </span>
-                            <div className="inline-flex mt-2 xs:mt-0">
-                                <button
-                                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                                    disabled={currentPage === 1}
-                                    className="text-sm bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-l disabled:opacity-50"
-                                >
-                                    Prev
-                                </button>
-                                <button
-                                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(funds.length / itemsPerPage)))}
-                                    disabled={currentPage === Math.ceil(funds.length / itemsPerPage)}
-                                    className="text-sm bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-r disabled:opacity-50"
-                                >
-                                    Next
-                                </button>
-                            </div>
+                        <div className="p-4 border-t border-gray-100 dark:border-gray-700 flex justify-end gap-2">
+                            <button
+                                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                                disabled={currentPage === 1}
+                                className="px-4 py-2 text-sm font-medium rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50"
+                            >
+                                Previous
+                            </button>
+                            <button
+                                onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(funds.length / itemsPerPage)))}
+                                disabled={currentPage === Math.ceil(funds.length / itemsPerPage)}
+                                className="px-4 py-2 text-sm font-medium rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50"
+                            >
+                                Next
+                            </button>
                         </div>
                     )}
                 </div>
@@ -210,18 +236,24 @@ const Funding = () => {
 
             {/* Modal */}
             {isModalOpen && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 px-4">
-                    <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full relative">
-                        <button
-                            onClick={() => setIsModalOpen(false)}
-                            className="absolute top-3 right-3 text-gray-500 hover:text-gray-800"
-                        >
-                            ✕
-                        </button>
-                        <h3 className="text-2xl font-bold mb-4 text-center text-gray-800">Donate Funds</h3>
-                        <Elements stripe={stripePromise}>
-                            <CheckoutForm onSuccess={handleSuccess} />
-                        </Elements>
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 px-4 transition-opacity">
+                    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full relative overflow-hidden animate-fade-in-up">
+                        <div className="bg-gray-50 dark:bg-gray-900 p-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
+                            <h3 className="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
+                                <FaHandHoldingHeart className="text-primary" /> Donate Funds
+                            </h3>
+                            <button
+                                onClick={() => setIsModalOpen(false)}
+                                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition"
+                            >
+                                ✕
+                            </button>
+                        </div>
+                        <div className="p-6">
+                            <Elements stripe={stripePromise}>
+                                <CheckoutForm onSuccess={handleSuccess} />
+                            </Elements>
+                        </div>
                     </div>
                 </div>
             )}

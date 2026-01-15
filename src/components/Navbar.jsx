@@ -1,127 +1,213 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { useState, useContext } from 'react';
+import { NavLink, Link, useNavigate } from 'react-router-dom';
+import { NavHashLink } from 'react-router-hash-link';
 import useAuth from '../hooks/useAuth';
-import { useState } from 'react';
-import Swal from 'sweetalert2';
+import ThemeContext from '../context/ThemeProvider';
+import {
+    HiMenuAlt3,
+    HiX,
+    HiOutlineUserCircle,
+    HiOutlineLogout,
+    HiOutlineViewGrid,
+    HiSun,
+    HiMoon
+} from 'react-icons/hi';
+import logo from '../assets/fav.jpg'; // Make sure you have a logo placeholder or use text
 
 const Navbar = () => {
     const { user, logout } = useAuth();
+    const { theme, toggleTheme } = useContext(ThemeContext);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isProfileOpen, setIsProfileOpen] = useState(false);
     const navigate = useNavigate();
-    const [isOpen, setIsOpen] = useState(false); // User Menu Dropdown
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // Mobile Nav Menu
 
-    const handleLogout = () => {
-        logout();
-        Swal.fire({
-            icon: 'success',
-            title: 'Logged out successfully',
-            showConfirmButton: false,
-            timer: 1500
-        });
-        navigate('/');
-        setIsMobileMenuOpen(false);
+    const handleLogOut = async () => {
+        try {
+            await logout();
+            navigate('/');
+        } catch (error) {
+            console.error(error);
+        }
     };
 
+    const navLinks = [
+        { path: '/', label: 'Home' },
+        { path: '/donation-requests', label: 'Donation Requests' },
+        { path: '/blog', label: 'Blog' },
+        { path: '/funding', label: 'Funding' },
+        { path: '/about', label: 'About' },
+    ];
+
+    // Additional links for logged-in users could be added here or handled via logic
+
     return (
-        <nav className="bg-gray-900 shadow-lg sticky top-0 z-50">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex justify-between h-16 items-center">
-                    <div className="flex items-center">
-                        {/* Mobile Menu Button */}
-                        <div className="flex items-center sm:hidden mr-2">
-                            <button
-                                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                                className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
-                                aria-expanded="false"
+        <nav className="sticky top-0 z-50 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-sm border-b border-gray-100 dark:border-gray-800 transition-all duration-300">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="flex justify-between items-center h-16 sm:h-20">
+
+                    {/* Logo */}
+                    <Link to="/" className="flex items-center gap-2 group">
+                        <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                            {/* Simple Drop Icon or Image */}
+                            <svg className="w-6 h-6 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
+                            </svg>
+                        </div>
+                        <span className="text-2xl font-heading font-bold text-gray-900 dark:text-white">
+                            Blood<span className="text-primary">Unity</span>
+                        </span>
+                    </Link>
+
+                    {/* Desktop Navigation */}
+                    <div className="hidden md:flex items-center space-x-8">
+                        {navLinks.map((link) => (
+                            <NavLink
+                                key={link.path}
+                                to={link.path}
+                                className={({ isActive }) =>
+                                    `text-sm font-medium transition-colors duration-200 ${isActive
+                                        ? 'text-primary font-semibold'
+                                        : 'text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary'
+                                    }`
+                                }
                             >
-                                <span className="sr-only">Open main menu</span>
-                                {/* Icon when menu is closed. */}
-                                {!isMobileMenuOpen ? (
-                                    <svg className="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-                                    </svg>
-                                ) : (
-                                    /* Icon when menu is open. */
-                                    <svg className="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                )}
-                            </button>
-                        </div>
-
-                        <Link to="/" className="flex-shrink-0 flex items-center text-red-500 font-bold text-2xl tracking-wider">
-                            BloodDonate
-                        </Link>
-                        <div className="hidden sm:ml-10 sm:flex sm:space-x-8">
-                            <Link to="/" className="text-gray-300 hover:text-white hover:bg-gray-800 px-3 py-2 rounded-md text-sm font-medium transition duration-300">
-                                Home
-                            </Link>
-                            <Link to="/donation-requests" className="text-gray-300 hover:text-white hover:bg-gray-800 px-3 py-2 rounded-md text-sm font-medium transition duration-300">
-                                Donation Requests
-                            </Link>
-                            {user && (
-                                <Link to="/funding" className="text-gray-300 hover:text-white hover:bg-gray-800 px-3 py-2 rounded-md text-sm font-medium transition duration-300">
-                                    Funding
-                                </Link>
-                            )}
-                            <Link to="/blog" className="text-gray-300 hover:text-white hover:bg-gray-800 px-3 py-2 rounded-md text-sm font-medium transition duration-300">
-                                Blog
-                            </Link>
-                            <Link to="/search" className="text-gray-300 hover:text-white hover:bg-gray-800 px-3 py-2 rounded-md text-sm font-medium transition duration-300">
-                                Search
-                            </Link>
-                        </div>
+                                {link.label}
+                            </NavLink>
+                        ))}
                     </div>
-                    <div className="flex items-center space-x-4">
-                        {user ? (
-                            <div className="ml-3 relative group">
-                                <div className="flex items-center cursor-pointer">
-                                    <span className="text-gray-300 text-sm mr-3 font-medium hidden md:block">Hello, {user.name}</span>
-                                    <button onClick={() => setIsOpen(!isOpen)} className="bg-gray-800 flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-300 border-2 border-red-500" id="user-menu" aria-haspopup="true">
-                                        <span className="sr-only">Open user menu</span>
-                                        <img className="h-9 w-9 rounded-full object-cover" src={user.avatar} alt="" />
-                                    </button>
-                                </div>
 
-                                {isOpen && (
-                                    <div className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 z-50 transform transition-all duration-200">
-                                        <div className="px-4 py-3 border-b border-gray-100">
-                                            <p className="text-sm text-gray-500">Signed in as</p>
-                                            <p className="text-sm font-bold text-gray-900 truncate">{user.email}</p>
-                                        </div>
-                                        <Link to="/dashboard" className="block px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 transition duration-150" role="menuitem">Dashboard</Link>
-                                        <Link to="/dashboard/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 transition duration-150" role="menuitem">Profile</Link>
-                                        <button onClick={handleLogout} className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 transition duration-150 border-t border-gray-100" role="menuitem">
-                                            Logout
+                    {/* Theme Toggle & Auth */}
+                    <div className="hidden md:flex items-center space-x-4">
+                        <button
+                            onClick={toggleTheme}
+                            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                            aria-label="Toggle Theme"
+                        >
+                            {theme === 'dark' ? (
+                                <HiSun className="w-6 h-6 text-yellow-500" />
+                            ) : (
+                                <HiMoon className="w-6 h-6 text-gray-600" />
+                            )}
+                        </button>
+
+                        {user ? (
+                            <div className="relative">
+                                {/* ... user profile dropdown ... */}
+                                <button
+                                    onClick={() => setIsProfileOpen(!isProfileOpen)}
+                                    className="flex items-center gap-2 p-1 pl-2 pr-3 rounded-full border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all"
+                                >
+                                    <img
+                                        src={user.photoURL || 'https://i.ibb.co.com/M6h8732d/users-vector-icon-png-260862.jpg'}
+                                        alt="User"
+                                        className="w-8 h-8 rounded-full object-cover"
+                                    />
+                                    <span className="text-sm font-medium text-gray-700 dark:text-gray-200 max-w-[100px] truncate">
+                                        {user.displayName}
+                                    </span>
+                                </button>
+
+                                {isProfileOpen && (
+                                    <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 py-2 origin-top-right transform transition-all z-50">
+                                        <Link
+                                            to="/dashboard"
+                                            className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
+                                            onClick={() => setIsProfileOpen(false)}
+                                        >
+                                            <HiOutlineViewGrid className="w-4 h-4" /> Dashboard
+                                        </Link>
+                                        <Link
+                                            to="/dashboard/profile"
+                                            className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
+                                            onClick={() => setIsProfileOpen(false)}
+                                        >
+                                            <HiOutlineUserCircle className="w-4 h-4" /> My Profile
+                                        </Link>
+                                        <div className="border-t border-gray-100 dark:border-gray-700 my-1"></div>
+                                        <button
+                                            onClick={handleLogOut}
+                                            className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                                        >
+                                            <HiOutlineLogout className="w-4 h-4" /> Logout
                                         </button>
                                     </div>
                                 )}
                             </div>
                         ) : (
-                            <div className="hidden sm:flex space-x-4">
-                                <Link to="/login" className="text-gray-300 hover:text-white font-medium px-4 py-2 transition duration-300">Login</Link>
-                                <Link to="/register" className="bg-red-600 text-white px-5 py-2 rounded-full font-bold hover:bg-red-700 shadow-md hover:shadow-lg transition duration-300 transform hover:-translate-y-0.5">Register</Link>
+                            <div className="flex items-center gap-3">
+                                <Link to="/login" className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">
+                                    Login
+                                </Link>
+                                <Link to="/register" className="btn-primary py-2 px-5 text-sm">
+                                    Register
+                                </Link>
                             </div>
                         )}
+                    </div>
+
+                    {/* Mobile Menu Button */}
+                    <div className="md:hidden">
+                        <button
+                            onClick={() => setIsMenuOpen(!isMenuOpen)}
+                            className="p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+                        >
+                            {isMenuOpen ? <HiX className="w-6 h-6" /> : <HiMenuAlt3 className="w-6 h-6" />}
+                        </button>
                     </div>
                 </div>
             </div>
 
-            {/* Mobile Menu */}
-            {isMobileMenuOpen && (
-                <div className="sm:hidden bg-gray-800">
-                    <div className="px-2 pt-2 pb-3 space-y-1">
-                        <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Home</Link>
-                        <Link to="/donation-requests" onClick={() => setIsMobileMenuOpen(false)} className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Donation Requests</Link>
-                        {user && (
-                            <Link to="/funding" onClick={() => setIsMobileMenuOpen(false)} className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Funding</Link>
-                        )}
-                        <Link to="/blog" onClick={() => setIsMobileMenuOpen(false)} className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Blog</Link>
-                        <Link to="/search" onClick={() => setIsMobileMenuOpen(false)} className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Search</Link>
-
-                        {!user && (
-                            <div className="border-t border-gray-700 pt-4 pb-2 mt-2">
-                                <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} className="block w-full text-center text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-base font-medium">Login</Link>
-                                <Link to="/register" onClick={() => setIsMobileMenuOpen(false)} className="block w-full text-center mt-2 bg-red-600 text-white px-5 py-3 rounded-md font-bold hover:bg-red-700">Register</Link>
+            {/* Mobile Menu Overlay */}
+            {isMenuOpen && (
+                <div className="md:hidden absolute top-full left-0 w-full bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 shadow-xl py-4 flex flex-col space-y-2 px-4 animate-in slide-in-from-top-2 duration-200">
+                    {navLinks.map((link) => (
+                        <NavLink
+                            key={link.path}
+                            to={link.path}
+                            onClick={() => setIsMenuOpen(false)}
+                            className={({ isActive }) =>
+                                `block px-4 py-3 rounded-lg text-base font-medium transition-colors ${isActive
+                                    ? 'bg-primary/10 text-primary'
+                                    : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'
+                                }`
+                            }
+                        >
+                            {link.label}
+                        </NavLink>
+                    ))}
+                    <div className="border-t border-gray-100 dark:border-gray-800 my-2 pt-2">
+                        {user ? (
+                            <>
+                                <Link
+                                    to="/dashboard"
+                                    onClick={() => setIsMenuOpen(false)}
+                                    className="block px-4 py-3 rounded-lg text-base font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
+                                >
+                                    Dashboard
+                                </Link>
+                                <button
+                                    onClick={() => { handleLogOut(); setIsMenuOpen(false); }}
+                                    className="w-full text-left block px-4 py-3 rounded-lg text-base font-medium text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                                >
+                                    Logout
+                                </button>
+                            </>
+                        ) : (
+                            <div className="grid grid-cols-2 gap-3 mt-2">
+                                <Link
+                                    to="/login"
+                                    onClick={() => setIsMenuOpen(false)}
+                                    className="flex items-center justify-center px-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-700 font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                                >
+                                    Login
+                                </Link>
+                                <Link
+                                    to="/register"
+                                    onClick={() => setIsMenuOpen(false)}
+                                    className="flex items-center justify-center px-4 py-2.5 rounded-lg bg-primary text-white font-medium hover:bg-primary-hover transition-colors"
+                                >
+                                    Register
+                                </Link>
                             </div>
                         )}
                     </div>

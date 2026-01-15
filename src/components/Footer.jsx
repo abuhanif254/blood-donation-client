@@ -1,74 +1,113 @@
 import { Link } from 'react-router-dom';
-import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaPhone, FaEnvelope, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt } from 'react-icons/fa';
 
 const Footer = () => {
     return (
-        <footer className="bg-gray-900 text-white pt-16 pb-8">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
-                    {/* About Section */}
+        <footer className="bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 pt-16 pb-8 transition-colors duration-300">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 mb-12">
+
+                    {/* Brand Section */}
                     <div className="space-y-4">
-                        <h3 className="text-2xl font-bold text-red-500">BloodDonate</h3>
-                        <p className="text-gray-400 text-sm leading-relaxed">
-                            Connecting donors with those in need. Join our community to save lives and make a difference. Every drop counts.
+                        <Link to="/" className="flex items-center gap-2 group">
+                            <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                                <svg className="w-6 h-6 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
+                                </svg>
+                            </div>
+                            <span className="text-2xl font-heading font-bold text-gray-900 dark:text-white">
+                                Blood<span className="text-primary">Unity</span>
+                            </span>
+                        </Link>
+                        <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed max-w-xs">
+                            Connecting donors with those in need. Join our community to save lives and make a difference today.
                         </p>
-                        <div className="flex space-x-4 pt-2">
-                            <a href="#" className="text-gray-400 hover:text-white transition duration-300"><FaFacebook size={20} /></a>
-                            <a href="#" className="text-gray-400 hover:text-white transition duration-300"><FaTwitter size={20} /></a>
-                            <a href="#" className="text-gray-400 hover:text-white transition duration-300"><FaInstagram size={20} /></a>
-                            <a href="#" className="text-gray-400 hover:text-white transition duration-300"><FaLinkedin size={20} /></a>
+                        <div className="flex items-center space-x-4 pt-2">
+                            <SocialLink href="#" icon={<FaFacebookF />} />
+                            <SocialLink href="#" icon={<FaTwitter />} />
+                            <SocialLink href="#" icon={<FaInstagram />} />
+                            <SocialLink href="#" icon={<FaLinkedinIn />} />
                         </div>
                     </div>
 
                     {/* Quick Links */}
                     <div>
-                        <h4 className="text-lg font-bold mb-6 border-b-2 border-red-600 inline-block pb-2">Quick Links</h4>
+                        <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6">Quick Links</h3>
                         <ul className="space-y-3">
-                            <li><Link to="/" className="text-gray-400 hover:text-red-500 transition duration-300">Home</Link></li>
-                            <li><Link to="/about" className="text-gray-400 hover:text-red-500 transition duration-300">About Us</Link></li>
-                            <li><Link to="/search" className="text-gray-400 hover:text-red-500 transition duration-300">Find Donors</Link></li>
-                            <li><Link to="/donation-requests" className="text-gray-400 hover:text-red-500 transition duration-300">Donation Requests</Link></li>
-                            <li><Link to="/blog" className="text-gray-400 hover:text-red-500 transition duration-300">Blog</Link></li>
+                            <FooterLink to="/" label="Home" />
+                            <FooterLink to="/about" label="About Us" />
+                            <FooterLink to="/donation-requests" label="Find Blood" />
+                            <FooterLink to="/blog" label="Latest News" />
+                            <FooterLink to="/contact" label="Contact" />
                         </ul>
                     </div>
 
                     {/* Support */}
                     <div>
-                        <h4 className="text-lg font-bold mb-6 border-b-2 border-red-600 inline-block pb-2">Support</h4>
+                        <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6">Support</h3>
                         <ul className="space-y-3">
-                            <li><Link to="/contact" className="text-gray-400 hover:text-red-500 transition duration-300">Contact Us</Link></li>
-                            <li><Link to="/privacy" className="text-gray-400 hover:text-red-500 transition duration-300">Privacy Policy</Link></li>
-                            <li><Link to="/terms" className="text-gray-400 hover:text-red-500 transition duration-300">Terms of Service</Link></li>
-                            <li><Link to="/faq" className="text-gray-400 hover:text-red-500 transition duration-300">FAQ</Link></li>
+                            <FooterLink to="/faq" label="Help Center" />
+                            <FooterLink to="/privacy" label="Privacy Policy" />
+                            <FooterLink to="/terms" label="Terms of Service" />
+                            <FooterLink to="/funding" label="Donate Funds" />
+                            <FooterLink to="/register" label="Become a Volunteer" />
                         </ul>
                     </div>
 
                     {/* Contact Info */}
                     <div>
-                        <h4 className="text-lg font-bold mb-6 border-b-2 border-red-600 inline-block pb-2">Get in Touch</h4>
+                        <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6">Contact Us</h3>
                         <ul className="space-y-4">
-                            <li className="flex items-start">
-                                <FaMapMarkerAlt className="text-red-500 mt-1 mr-3" />
-                                <span className="text-gray-400 text-sm">123 Health Street, Medical City, Dhaka 1200, Bangladesh</span>
+                            <li className="flex items-start gap-3 text-gray-600 dark:text-gray-400 text-sm">
+                                <FaMapMarkerAlt className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+                                <span>123 Life Saver Street, <br />Health City, HC 12345</span>
                             </li>
-                            <li className="flex items-center">
-                                <FaPhone className="text-red-500 mr-3" />
-                                <span className="text-gray-400 text-sm">+880 1234 567890</span>
+                            <li className="flex items-center gap-3 text-gray-600 dark:text-gray-400 text-sm">
+                                <FaPhoneAlt className="w-4 h-4 text-primary shrink-0" />
+                                <span>+1 (555) 123-4567</span>
                             </li>
-                            <li className="flex items-center">
-                                <FaEnvelope className="text-red-500 mr-3" />
-                                <span className="text-gray-400 text-sm">support@blooddonate.com</span>
+                            <li className="flex items-center gap-3 text-gray-600 dark:text-gray-400 text-sm">
+                                <FaEnvelope className="w-4 h-4 text-primary shrink-0" />
+                                <span>support@bloodunity.com</span>
                             </li>
                         </ul>
                     </div>
                 </div>
 
-                <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-500 text-sm">
-                    <p>&copy; {new Date().getFullYear()} BloodDonate. All rights reserved.</p>
+                <div className="border-t border-gray-100 dark:border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <p className="text-gray-500 dark:text-gray-500 text-sm">
+                        &copy; {new Date().getFullYear()} BloodUnity. All rights reserved.
+                    </p>
+                    <div className="flex items-center space-x-6">
+                        <Link to="/privacy" className="text-sm text-gray-500 hover:text-primary transition-colors">Privacy</Link>
+                        <Link to="/terms" className="text-sm text-gray-500 hover:text-primary transition-colors">Terms</Link>
+                    </div>
                 </div>
             </div>
         </footer>
     );
 };
+
+const SocialLink = ({ href, icon }) => (
+    <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-primary hover:text-white dark:hover:bg-primary dark:hover:text-white transition-all duration-300"
+    >
+        {icon}
+    </a>
+);
+
+const FooterLink = ({ to, label }) => (
+    <li>
+        <Link
+            to={to}
+            className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors text-sm"
+        >
+            {label}
+        </Link>
+    </li>
+);
 
 export default Footer;

@@ -29,6 +29,7 @@ const Contact = lazy(() => import('./pages/Contact'));
 const Privacy = lazy(() => import('./pages/Privacy'));
 const Terms = lazy(() => import('./pages/Terms'));
 const FAQ = lazy(() => import('./pages/FAQ'));
+const Blog = lazy(() => import('./pages/Blog'));
 const Funding = lazy(() => import('./pages/Funding'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
@@ -41,9 +42,10 @@ function App() {
             <Route index element={<Home />} />
             <Route path="login" element={<Login />} />
             <Route path="register" element={<Register />} />
-            <Route path="donation-requests" element={<DonationRequests />} />
+            <Route path="donation-requests" element={<PrivateRoute><DonationRequests /></PrivateRoute>} />
+            <Route path="donation-requests/:id" element={<DonationRequestDetails />} />
             <Route path="search" element={<Search />} />
-            <Route path="blog" element={<div>Blog (Optional)</div>} />
+            <Route path="blog" element={<Blog />} />
             <Route path="about" element={<About />} />
             <Route path="contact" element={<Contact />} />
             <Route path="privacy" element={<Privacy />} />
@@ -57,7 +59,7 @@ function App() {
             <Route path="profile" element={<Profile />} />
             <Route path="create-donation-request" element={<PrivateRoute><CreateDonationRequest /></PrivateRoute>} />
             <Route path="my-donation-requests" element={<PrivateRoute><MyDonationRequests /></PrivateRoute>} />
-            <Route path="donation-requests/:id" element={<DonationRequestDetails />} />
+            {/* Details moved to public */}
             <Route path="donation-requests/edit/:id" element={<PrivateRoute><UpdateDonationRequest /></PrivateRoute>} />
             <Route path="all-users" element={<AdminRoute><AllUsers /></AdminRoute>} />
             <Route path="all-blood-donation-request" element={<VolunteerRoute><AllDonationRequests /></VolunteerRoute>} />

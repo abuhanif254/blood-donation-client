@@ -167,16 +167,15 @@ const Search = () => {
             <div className={`max-w-4xl mx-auto ${showModal ? 'opacity-50 pointer-events-none' : ''}`}>
                 <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">Search Blood Donors</h2>
 
-                <div className="bg-white p-6 rounded-lg shadow-md mb-8">
-                    <form onSubmit={handleSearch} className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg mb-12 border border-gray-100 dark:border-gray-700">
+                    <form onSubmit={handleSearch} className="grid grid-cols-1 md:grid-cols-4 gap-6 items-end">
                         <div>
-                            <label className="block text-gray-700 text-sm font-bold mb-2">Blood Group</label>
+                            <label className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Blood Group</label>
                             <select
                                 name="bloodGroup"
                                 value={searchParams.bloodGroup}
                                 onChange={handleChange}
-                                className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-red-500"
-                                required
+                                className="input-field"
                             >
                                 <option value="">Select Group</option>
                                 <option value="A+">A+</option>
@@ -190,13 +189,12 @@ const Search = () => {
                             </select>
                         </div>
                         <div>
-                            <label className="block text-gray-700 text-sm font-bold mb-2">District</label>
+                            <label className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">District</label>
                             <select
                                 name="district"
                                 value={searchParams.district}
                                 onChange={handleChange}
-                                className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-red-500"
-                                required
+                                className="input-field"
                             >
                                 <option value="">Select District</option>
                                 {districts.map(d => (
@@ -205,13 +203,12 @@ const Search = () => {
                             </select>
                         </div>
                         <div>
-                            <label className="block text-gray-700 text-sm font-bold mb-2">Upazila</label>
+                            <label className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Upazila</label>
                             <select
                                 name="upazila"
                                 value={searchParams.upazila}
                                 onChange={handleChange}
-                                className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-red-500"
-                                required
+                                className="input-field"
                             >
                                 <option value="">Select Upazila</option>
                                 {filteredUpazilas.map(u => (
@@ -219,9 +216,9 @@ const Search = () => {
                                 ))}
                             </select>
                         </div>
-                        <div className="flex items-end">
-                            <button type="submit" className="w-full bg-red-600 text-white font-bold py-2 px-4 rounded hover:bg-red-700 transition duration-300">
-                                Search
+                        <div>
+                            <button type="submit" className="w-full btn-primary h-[46px]">
+                                Search Donors
                             </button>
                         </div>
                     </form>
@@ -229,42 +226,56 @@ const Search = () => {
 
                 {/* Results */}
                 {searched && (
-                    <div>
-                        <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-xl font-bold">Search Results ({donors.length})</h3>
+                    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                        <div className="flex justify-between items-center mb-6">
+                            <h3 className="text-2xl font-bold dark:text-white">Results <span className="text-gray-500 text-lg font-normal">({donors.length} found)</span></h3>
                             {donors.length > 0 && (
                                 <button
                                     onClick={downloadPDF}
-                                    className="bg-green-600 text-white font-bold py-1 px-3 rounded hover:bg-green-700 text-sm"
+                                    className="btn-outline py-2 px-4 text-sm"
                                 >
                                     Download PDF
                                 </button>
                             )}
                         </div>
+
                         {loading ? (
-                            <p>Loading...</p>
+                            <div className="flex justify-center py-20">
+                                <span className="loading loading-spinner loading-lg text-primary"></span>
+                            </div>
                         ) : donors.length > 0 ? (
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {donors.map(donor => (
-                                    <div key={donor._id} className="bg-white p-6 rounded-lg shadow flex items-center space-x-4">
-                                        <img src={donor.avatar} alt={donor.name} className="w-16 h-16 rounded-full object-cover" />
-                                        <div className="flex-1">
-                                            <h4 className="text-lg font-bold">{donor.name}</h4>
-                                            <p className="text-gray-600 text-sm">{donor.district}, {donor.upazila}</p>
-                                            <p className="text-red-600 font-bold">Blood Group: {donor.bloodGroup}</p>
-                                            <p className="text-sm mt-1">Email: {donor.email}</p>
-                                            <button
-                                                onClick={() => handleRequestClick(donor)}
-                                                className="mt-2 bg-red-500 text-white text-xs font-bold py-1 px-3 rounded hover:bg-red-600"
-                                            >
-                                                Request Donation
-                                            </button>
+                                    <div key={donor._id} className="card flex flex-col items-center text-center p-6 group">
+                                        <div className="relative mb-4">
+                                            <img
+                                                src={donor.avatar || 'https://i.ibb.co.com/M6h8732d/users-vector-icon-png-260862.jpg'}
+                                                alt={donor.name}
+                                                className="w-24 h-24 rounded-full object-cover border-4 border-gray-100 dark:border-gray-700 group-hover:border-primary transition-colors duration-300"
+                                            />
+                                            <span className="absolute bottom-0 right-0 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full border-2 border-white dark:border-gray-800">
+                                                {donor.bloodGroup}
+                                            </span>
                                         </div>
+
+                                        <h4 className="text-xl font-bold mb-1 dark:text-white">{donor.name}</h4>
+                                        <p className="text-gray-500 text-sm mb-4">{donor.district}, {donor.upazila}</p>
+
+                                        <div className="w-full border-t border-gray-100 dark:border-gray-700 my-4"></div>
+
+                                        <button
+                                            onClick={() => handleRequestClick(donor)}
+                                            className="w-full btn-primary py-2 text-sm"
+                                        >
+                                            Request Donation
+                                        </button>
                                     </div>
                                 ))}
                             </div>
                         ) : (
-                            <div className="text-center text-gray-600">No donors found matching criteria.</div>
+                            <div className="text-center py-20 bg-white dark:bg-gray-800 rounded-xl border border-dashed border-gray-300 dark:border-gray-700">
+                                <p className="text-gray-500 dark:text-gray-400 text-lg">No donors found matching your criteria.</p>
+                            </div>
                         )}
                     </div>
                 )}

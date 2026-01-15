@@ -59,7 +59,15 @@ const Register = () => {
 
             if (res.data.success) {
                 setAvatarUrl(res.data.data.url);
-                Swal.fire('Success', 'Image uploaded successfully!', 'success');
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: 'Image uploaded successfully!',
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
             }
         } catch (error) {
             console.error(error);
@@ -94,7 +102,7 @@ const Register = () => {
             await Swal.fire({
                 icon: 'success',
                 title: 'Registration Successful',
-                text: 'Welcome to BloodDonate!',
+                text: 'Welcome to BloodUnity!',
                 timer: 2000,
                 showConfirmButton: false
             });
@@ -109,29 +117,36 @@ const Register = () => {
     }
 
     return (
-        <div className="flex justify-center items-center min-h-screen bg-gray-100 py-10">
-            <div className="w-full max-w-2xl bg-white rounded-lg shadow-md p-8">
-                <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Register</h2>
+        <div className="flex justify-center items-center min-h-screen bg-neutral dark:bg-gray-950 py-12 px-4">
+            <div className="w-full max-w-3xl bg-white dark:bg-gray-900 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-800 p-8 sm:p-10">
+                <div className="text-center mb-10">
+                    <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Join BloodUnity</h2>
+                    <p className="text-gray-500 dark:text-gray-400 text-sm">Create an account to donate blood and save lives</p>
+                </div>
 
-                {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">{error}</div>}
+                {error && (
+                    <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg mb-6 text-sm">
+                        {error}
+                    </div>
+                )}
 
-                <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
 
-                    <div className="md:col-span-2">
-                        <label className="block text-gray-700 text-sm font-bold mb-2">Name</label>
-                        <input type="text" {...register('name', { required: 'Name is required' })} className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" />
+                    <div className="md:col-span-1">
+                        <label className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Full Name</label>
+                        <input type="text" {...register('name', { required: 'Name is required' })} className="input-field" placeholder="Enter your full name" />
                         {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>}
                     </div>
 
-                    <div className="md:col-span-2">
-                        <label className="block text-gray-700 text-sm font-bold mb-2">Email</label>
-                        <input type="email" {...register('email', { required: 'Email is required' })} className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" />
+                    <div className="md:col-span-1">
+                        <label className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Email Address</label>
+                        <input type="email" {...register('email', { required: 'Email is required' })} className="input-field" placeholder="Enter your email" />
                         {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
                     </div>
 
-                    <div>
-                        <label className="block text-gray-700 text-sm font-bold mb-2">Blood Group</label>
-                        <select {...register('bloodGroup', { required: 'Blood Group is required' })} className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                    <div className="md:col-span-1">
+                        <label className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Blood Group</label>
+                        <select {...register('bloodGroup', { required: 'Blood Group is required' })} className="input-field">
                             <option value="">Select Blood Group</option>
                             <option value="A+">A+</option>
                             <option value="A-">A-</option>
@@ -145,9 +160,22 @@ const Register = () => {
                         {errors.bloodGroup && <p className="text-red-500 text-xs mt-1">{errors.bloodGroup.message}</p>}
                     </div>
 
-                    <div>
-                        <label className="block text-gray-700 text-sm font-bold mb-2">District</label>
-                        <select {...register('district', { required: 'District is required' })} className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                    <div className="md:col-span-1">
+                        <label className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Avatar</label>
+                        <div className="relative">
+                            <input type="file" onChange={handleImageUpload} className="hidden" id="file-upload" accept="image/*" />
+                            <label htmlFor="file-upload" className="flex items-center justify-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+                                <span className="text-sm text-gray-600 dark:text-gray-300">{uploading ? 'Uploading...' : 'Choose File'}</span>
+                            </label>
+                            {avatarUrl && <span className="absolute top-2 right-2 flex h-3 w-3"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span><span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span></span>}
+                        </div>
+                        {avatarUrl && <p className="text-green-600 text-xs mt-1">Image uploaded successfully!</p>}
+                        {!avatarUrl && <input type="text" {...register('avatar')} placeholder="Or enter image URL" className="input-field mt-2 text-xs" />}
+                    </div>
+
+                    <div className="md:col-span-1">
+                        <label className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">District</label>
+                        <select {...register('district', { required: 'District is required' })} className="input-field">
                             <option value="">Select District</option>
                             {/* We use ID as value now for easier filtering */}
                             {districts.map(d => (
@@ -157,9 +185,9 @@ const Register = () => {
                         {errors.district && <p className="text-red-500 text-xs mt-1">{errors.district.message}</p>}
                     </div>
 
-                    <div>
-                        <label className="block text-gray-700 text-sm font-bold mb-2">Upazila</label>
-                        <select {...register('upazila', { required: 'Upazila is required' })} className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                    <div className="md:col-span-1">
+                        <label className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Upazila</label>
+                        <select {...register('upazila', { required: 'Upazila is required' })} className="input-field">
                             <option value="">Select Upazila</option>
                             {filteredUpazilas.map(u => (
                                 <option key={u.id} value={u.name}>{u.name} ({u.bn_name})</option>
@@ -168,37 +196,28 @@ const Register = () => {
                         {errors.upazila && <p className="text-red-500 text-xs mt-1">{errors.upazila.message}</p>}
                     </div>
 
-                    <div>
-                        <label className="block text-gray-700 text-sm font-bold mb-2">Avatar Upload (ImageBB)</label>
-                        <div className="flex space-x-2">
-                            <input type="file" onChange={handleImageUpload} className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" accept="image/*" />
-                        </div>
-                        {uploading && <p className="text-blue-500 text-xs mt-1">Uploading...</p>}
-                        {avatarUrl && <p className="text-green-500 text-xs mt-1">Image uploaded!</p>}
-                        <div className="mt-2 text-xs text-gray-500 text-center">OR enter URL manually</div>
-                        <input type="text" {...register('avatar')} placeholder="http://..." className="w-full mt-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" />
-                    </div>
-
-                    <div>
-                        <label className="block text-gray-700 text-sm font-bold mb-2">Password</label>
-                        <input type="password" {...register('password', { required: 'Password is required' })} className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" />
+                    <div className="md:col-span-1">
+                        <label className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Password</label>
+                        <input type="password" {...register('password', { required: 'Password is required' })} className="input-field" placeholder="Create a password" />
                         {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>}
                     </div>
 
-                    <div>
-                        <label className="block text-gray-700 text-sm font-bold mb-2">Confirm Password</label>
-                        <input type="password" {...register('confirm_password', { required: 'Confirm Password is required' })} className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" />
+                    <div className="md:col-span-1">
+                        <label className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Confirm Password</label>
+                        <input type="password" {...register('confirm_password', { required: 'Confirm Password is required' })} className="input-field" placeholder="Confirm your password" />
                         {errors.confirm_password && <p className="text-red-500 text-xs mt-1">{errors.confirm_password.message}</p>}
                     </div>
 
-                    <div className="md:col-span-2 mt-4">
-                        <button type="submit" className="w-full bg-red-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-700 transition duration-300">Register</button>
+                    <div className="md:col-span-2 mt-6">
+                        <button type="submit" className="w-full btn-primary py-3 text-lg shadow-lg">
+                            Register Account
+                        </button>
                     </div>
 
                 </form>
 
-                <p className="mt-4 text-center text-sm text-gray-600">
-                    Already have an account? <Link to="/login" className="text-red-600 hover:underline">Login</Link>
+                <p className="mt-8 text-center text-sm text-gray-600 dark:text-gray-400">
+                    Already have an account? <Link to="/login" className="text-primary font-bold hover:underline">Sign In</Link>
                 </p>
             </div>
         </div>
